@@ -1,9 +1,7 @@
 <!DOCTYPE html>
 <html>
 <head>
-    <title>Chúc mừng sinh nhật em yêu
-    <br>
-    Thảo Phương!</title>
+    <title>Chúc mừng sinh nhật em yêu của anh <br> Thảo Phương!</title>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <style>
@@ -35,7 +33,8 @@
         }
 
         h1 {
-            font-size: clamp(1.5em, 5vw, 3em);
+            /* Giảm kích thước chữ chính */
+            font-size: clamp(1.5em, 5vw, 3em); /* Điều chỉnh các giá trị em, vw, và em */
             color: #e91e63;
             text-shadow: 3px 3px 5px rgba(0, 0, 0, 0.3);
             margin-bottom: 20px;
@@ -201,42 +200,38 @@
             100% { transform: rotate(360deg); }
         }
 
-        /* Стиль cho dảy đèn chớp */
-        .light-string {
+        /* Стиль cho đèn nháy */
+        .music-light {
             position: fixed;
-            top: 0;
-            left: 0;
-            width: 100%;
-            height: 100%;
-            pointer-events: none;
-            z-index: -3; /* Phía sau các hiệu ứng khác */
-        }
-
-        .light-bulb {
-            position: absolute;
-            width: 15px;
-            height: 15px;
+            top: 50px;
+            width: 30px;
+            height: 30px;
             border-radius: 50%;
             background-color: #ccc;
             opacity: 0.8;
-            transition: background-color 0.1s ease-in-out;
+            z-index: -2; /* Đằng sau pháo hoa và bóng bay */
+            transition: background-color 0.1s ease-in-out; /* Thêm transition cho sự thay đổi màu mượt mà hơn */
         }
 
-        .light-bulb.on {
-            /* Màu sắc khi nháy */
-        }
+        .light-top-left { left: 50px; }
+        .light-top-right { right: 50px; }
+        .light-bottom-left { bottom: 50px; left: 50px; }
+        .light-bottom-right { bottom: 50px; right: 50px; }
     </style>
     <link href="https://fonts.googleapis.com/css2?family=Pacifico&display=swap" rel="stylesheet">
 </head>
 <body>
 
 <div class="birthday-container">
-    <h1>Chúc mừng sinh nhật tình em yêu của anh
-        <br>Thảo Phương!</h1>
-    <p class="date">Ngày 11 tháng 8 năm 2008
+    <h1>Chúc mừng sinh nhật em yêu <br> Thảo Phương!</h1>
+    <p class="date">Ngày 11 Tháng 08 Năm 2008
     <br> Ngày mà một thiên thần nhỏ được sinh ra!</p>
     <p class="message">
-        Anh không thể tưởng tượng cuộc sống của mình sẽ như thế nào nếu không có em. Em là ánh sáng của cuộc đời anh, người bạn thân nhất và là người yêu tuyệt vời nhất. Chúc em một ngày thật đặc biệt và một năm đầy ắp những khoảnh khắc hạnh phúc bên nhau.
+        Chúc em sinh nhật vui vẻ !<br>
+        Mong rằng tuổi mới sẽ mang đến cho em thật nhiều niềm vui và những điều bất ngờ thú vị.<br>
+        Chúc em luôn xinh đẹp, rạng rỡ như những đóa hoa và ngọt ngào như những viên kẹo.<br>
+        Anh mong chúng ta sẽ cùng nhau đón những cái sinh nhật tiếp theo mãi yêu em.<br>
+        Gửi đến em những lời chúc tốt đẹp nhất từ trái tim!
     </p>
 
     <button id="music-button">Bật nhạc & Pháo sáng!</button>
@@ -246,13 +241,16 @@
 <div class="fireworks-container"></div>
 <div class="balloons-container"></div>
 <div class="confetti-container"></div>
-<div class="light-string">
-    </div>
 
 <div class="heart top-left"></div>
 <div class="heart top-right"></div>
 <div class="heart bottom-left"></div>
 <div class="heart bottom-right"></div>
+
+<div id="light1" class="music-light light-top-left"></div>
+<div id="light2" class="music-light light-top-right"></div>
+<div id="light3" class="music-light light-bottom-left"></div>
+<div id="light4" class="music-light light-bottom-right"></div>
 
 
 <script>
@@ -334,7 +332,12 @@
     const musicButton = document.getElementById('music-button');
     const audioElement = new Audio('birthday.mp3');
     const bodyElement = document.querySelector('body');
-    const lightStringContainer = document.querySelector('.light-string');
+    const lights = [
+        document.getElementById('light1'),
+        document.getElementById('light2'),
+        document.getElementById('light3'),
+        document.getElementById('light4')
+    ];
     let isPlaying = false;
     let fireworkInterval;
     let confettiInterval;
@@ -344,62 +347,9 @@
     const beatThreshold = 20; // Ngưỡng phát hiện nhịp (có thể cần điều chỉnh)
     const colors = ['#ff0000', '#00ff00', '#0000ff', '#ffff00', '#ff00ff', '#00ffff', '#ffa500', '#800080', '#008000']; // Mảng màu
     let colorIndex = 0;
-    const numLights = 60; // Số lượng đèn trong dảy
-    let lightBulbs = [];
 
-    // Tạo dảy đèn
-    for (let i = 0; i < numLights; i++) {
-        const light = document.createElement('div');
-        light.classList.add('light-bulb');
-        lightBulbs.push(light);
-        lightStringContainer.appendChild(light);
-    }
-
-    function positionLights() {
-        const width = window.innerWidth;
-        const height = window.innerHeight;
-        const bulbSize = 15;
-        let index = 0;
-
-        // Top border
-        for (let i = bulbSize / 2; i < width - bulbSize / 2; i += width / (numLights / 4)) {
-            if (index < numLights) {
-                lightBulbs[index].style.left = `px`;
-                lightBulbs[index].style.top = `px`;
-                index++;
-            }
-        }
-
-        // Right border
-        for (let i = bulbSize / 2 + width / (numLights / 4); i < height - bulbSize / 2 - width / (numLights / 4); i += height / (numLights / 4)) {
-            if (index < numLights) {
-                lightBulbs[index].style.left = `px`;
-                lightBulbs[index].style.top = `px`;
-                index++;
-            }
-        }
-
-        // Bottom border
-        for (let i = width - bulbSize / 2 - width / (numLights / 4); i > bulbSize / 2; i -= width / (numLights / 4)) {
-            if (index < numLights) {
-                lightBulbs[index].style.left = `px`;
-                lightBulbs[index].style.top = `px`;
-                index++;
-            }
-        }
-
-        // Left border
-        for (let i = height - bulbSize / 2 - width / (numLights / 4); i > bulbSize / 2 + width / (numLights / 4); i -= height / (numLights / 4)) {
-            if (index < numLights) {
-                lightBulbs[index].style.left = `px`;
-                lightBulbs[index].style.top = `px`;
-                index++;
-            }
-        }
-    }
-
-    positionLights();
-    window.addEventListener('resize', positionLights);
+    // Đặt text ban đầu cho nút
+    musicButton.textContent = 'Nhấn vào sẽ có bất ngờ☺️';
 
     function initAudioAnalysis() {
         if (!audioContext) {
@@ -425,16 +375,10 @@
         const average = sum / dataArray.length;
 
         if (average > beatThreshold) {
-            lightBulbs.forEach((light, index) => {
-                const delay = index * 20; // Tạo độ trễ nhỏ giữa các đèn
-                setTimeout(() => {
-                    light.style.backgroundColor = colors[(colorIndex + index) % colors.length];
-                    setTimeout(() => {
-                        light.style.backgroundColor = '#ccc'; // Tắt đèn sau một khoảng thời gian ngắn
-                    }, 80);
-                }, delay);
+            lights.forEach(light => {
+                light.style.backgroundColor = colors[colorIndex % colors.length];
+                colorIndex = (colorIndex + 1) % colors.length; // Chuyển sang màu tiếp theo cho mỗi đèn
             });
-            colorIndex = (colorIndex + 1) % colors.length; // Chuyển sang màu tiếp theo
         }
     }
 
@@ -442,7 +386,8 @@
         if (audioElement.paused) {
             audioElement.play();
             isPlaying = true;
-            musicButton.textContent = 'Tắt nhạc & Pháo sáng!';
+            musicButton.textContent = 'Cái này anh tự tay làm á mong em sẽ vui khi nhận được😊☺️';
+            bodyElement.classList.add('music-playing');
             initAudioAnalysis();
             fireworkInterval = setInterval(createFireworkBurst, 3000);
             confettiInterval = setInterval(createConfettiBurst, 1500);
@@ -451,21 +396,22 @@
                 if (isPlaying) {
                     requestAnimationFrame(animate);
                 } else {
+                    bodyElement.classList.remove('music-playing');
                     bodyElement.style.borderImage = 'initial';
-                    lightBulbs.forEach(light => light.style.backgroundColor = '#ccc');
-                    colorIndex = 0;
+                    lights.forEach(light => light.style.backgroundColor = '#ccc'); // Reset màu đèn
+                    colorIndex = 0; // Reset chỉ số màu
                 }
             });
         } else {
             audioElement.pause();
             isPlaying = false;
-            musicButton.textContent = 'Bật nhạc & Pháo sáng!';
+            musicButton.textContent = 'Nhấn vào sẽ có bất ngờ☺️';
             bodyElement.classList.remove('music-playing');
             clearInterval(fireworkInterval);
             clearInterval(confettiInterval);
             bodyElement.style.borderImage = 'initial';
-            lightBulbs.forEach(light => light.style.backgroundColor = '#ccc');
-            colorIndex = 0;
+            lights.forEach(light => light.style.backgroundColor = '#ccc'); // Reset màu đèn
+            colorIndex = 0; // Reset chỉ số màu
         }
     });
 
