@@ -2,7 +2,7 @@
 <html>
 <head>
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Chúc Mừng Sinh Nhật Thuỳ Dương</title>
+<title>Chúc Mừng Sinh Nhật Thảo Phương</title>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;700&display=swap" rel="stylesheet">
 <style>
   body {
@@ -21,7 +21,7 @@
 
   button {
     padding: 15px 30px;
-    font-size: 20px;
+    font-size: 21px; /* 26px * 0.8 = 20.8px, làm tròn 21px cho mobile */
     cursor: pointer;
     border: none;
     border-radius: 10px;
@@ -72,7 +72,7 @@
   }
 
   #tieuDeSinhNhat {
-    font-size: 24px; /* Kích thước font từ lần trước */
+    font-size: 25px; /* 31.2px * 0.8 = 24.96px, làm tròn 25px cho mobile */
     color: purple;
     font-weight: bold;
     margin-bottom: 5px;
@@ -80,7 +80,7 @@
   }
 
   #ngaySinh {
-    font-size: 15px; /* Kích thước font từ lần trước */
+    font-size: 16px; /* 19.5px * 0.8 = 15.6px, làm tròn 16px cho mobile */
     color: blue;
     font-style: italic;
     margin-bottom: 5px;
@@ -88,7 +88,7 @@
   }
 
   #loiKhen {
-    font-size: 11px; /* Kích thước font từ lần trước */
+    font-size: 11.5px; /* 14.3px * 0.8 = 11.44px, làm tròn 11.5px cho mobile */
     color: #FF69B4;
     font-weight: bold;
     margin-bottom: 10px;
@@ -96,11 +96,49 @@
   }
 
   .loiChucSinhNhat {
-    font-size: 9px; /* Kích thước font từ lần trước */
+    font-size: 9.5px; /* 11.7px * 0.8 = 9.36px, làm tròn 9.5px cho mobile */
     color: black;
     line-height: 1.2;
     margin-bottom: 3px;
     text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+  }
+
+  /* Điều chỉnh kích thước chữ cho màn hình lớn hơn (ví dụ: tablet) */
+  @media (min-width: 640px) {
+    button {
+      font-size: 23px; /* Tăng nhẹ cho tablet */
+    }
+    #tieuDeSinhNhat {
+      font-size: 28px; /* Tăng nhẹ cho tablet */
+    }
+    #ngaySinh {
+      font-size: 18px; /* Tăng nhẹ cho tablet */
+    }
+    #loiKhen {
+      font-size: 13px; /* Tăng nhẹ cho tablet */
+    }
+    .loiChucSinhNhat {
+      font-size: 11px; /* Tăng nhẹ cho tablet */
+    }
+  }
+
+  /* Điều chỉnh kích thước chữ cho màn hình desktop */
+  @media (min-width: 1024px) {
+    button {
+      font-size: 26px; /* Kích thước trước đó (30% lớn hơn so với ban đầu) */
+    }
+    #tieuDeSinhNhat {
+      font-size: 31.2px; /* Kích thước trước đó (30% lớn hơn so với ban đầu) */
+    }
+    #ngaySinh {
+      font-size: 19.5px; /* Kích thước trước đó (30% lớn hơn so với ban đầu) */
+    }
+    #loiKhen {
+      font-size: 14.3px; /* Kích thước trước đó (30% lớn hơn so với ban đầu) */
+    }
+    .loiChucSinhNhat {
+      font-size: 11.7px; /* Kích thước trước đó (30% lớn hơn so với ban đầu) */
+    }
   }
 
   #audioNen {
