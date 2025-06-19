@@ -49,7 +49,8 @@
     left: -20px;
     width: calc(100% + 40px);
     height: calc(100% + 40px);
-    background-image: url('duong_dan_den_hinh_anh_hoa_la.png'); /* Đã khôi phục đường dẫn ảnh gốc */
+    /* Placeholder for image - original URL was 'duong_dan_den_hinh_anh_hoa_la.png' */
+    background-image: url('https://placehold.co/100x100/A0A0A0/FFFFFF?text=Floral+Pattern'); /* Hình ảnh placeholder */
     background-size: cover;
     opacity: 0.3;
     z-index: -1;
@@ -474,41 +475,83 @@ class SoapBubble extends BaseObject {
         const y = animationCanvas.height + radius; // Bắt đầu từ dưới màn hình
         const speedY = -(Math.random() * 0.5 + 0.5); // Tốc độ bay lên
         const speedX = (Math.random() - 0.5) * 0.5; // Tốc độ di chuyển ngang nhẹ
-        const alpha = Math.random() * 0.3 + 0.3; // Độ trong suốt ban đầu (0.3 - 0.6)
+        const alpha = Math.random() * 0.6 + 0.4; // Tăng dải độ trong suốt ban đầu (0.4 - 1.0)
         const decay = 0.0008; // Tốc độ mờ dần chậm
         super(x, y, 'rgba(255, 255, 255, 0)', speedX, speedY, alpha, decay, radius); // Màu được tạo trong draw
         this.oscillationOffset = Math.random() * Math.PI * 2; // Offset cho hiệu ứng lắc lư ngang
+        this.shapeDistortion = Math.random() * 0.07 + 0.02; // Tăng biến dạng hình dạng nhẹ
+        this.rotation = Math.random() * Math.PI * 2; // Góc xoay ban đầu
     }
 
     update() {
         super.update();
-        this.x += this.speedX + Math.sin((this.y * 0.05) + this.oscillationOffset) * 0.5; // Lắc lư ngang khi bay lên
+        this.x += this.speedX + Math.sin((this.y * 0.05) + this.oscillationOffset) * 0.8; // Lắc lư ngang mạnh hơn
+        this.rotation += (this.speedX * 0.02); // Thêm xoay nhẹ dựa trên tốc độ ngang
     }
 
     draw() {
         ctx.save();
         ctx.globalAlpha = this.alpha; // Sử dụng alpha của đối tượng
 
-        // Vẽ bong bóng chính
         const gradient = ctx.createRadialGradient(
-            this.x + this.size * 0.3, this.y - this.size * 0.3, this.size * 0.1,
-            this.x, this.y, this.size * 0.8
+            this.x + this.size * 0.2, this.y - this.size * 0.2, this.size * 0.1, // Tâm của highlight
+            this.x, this.y, this.size * 0.8 // Tâm và bán kính của gradient chính
         );
-        gradient.addColorStop(0, 'rgba(255, 255, 255, 0.8)'); // Tâm sáng
-        gradient.addColorStop(0.5, 'rgba(173, 216, 230, 0.5)'); // Xanh nhạt trong
-        gradient.addColorStop(1, 'rgba(135, 206, 235, 0.2)'); // Xanh nhạt hơn ở rìa
+
+        // Thêm các điểm dừng màu để tạo hiệu ứng óng ánh rõ rệt hơn
+        gradient.addColorStop(0, `rgba(255, 255, 255, ${this.alpha * 1.0})`); // Tâm bong bóng rất sáng
+        gradient.addColorStop(0.15, `hsla(${180 + Math.sin(this.y * 0.03) * 80}, 100%, 85%, ${this.alpha * 0.8})`); // Màu xanh-tím nhạt thay đổi rõ hơn
+        gradient.addColorStop(0.35, `hsla(${240 + Math.cos(this.y * 0.02) * 80}, 100%, 80%, ${this.alpha * 0.7})`); // Màu tím-xanh thay đổi rõ hơn
+        gradient.addColorStop(0.55, `hsla(${300 + Math.sin(this.y * 0.04) * 80}, 100%, 75%, ${this.alpha * 0.6})`); // Màu hồng-tím thay đổi rõ hơn
+        gradient.addColorStop(0.75, `hsla(${0 + Math.cos(this.y * 0.03) * 80}, 100%, 70%, ${this.alpha * 0.5})`); // Màu cam-đỏ thay đổi rõ hơn
+        gradient.addColorStop(1, `rgba(255, 255, 255, ${this.alpha * 0.2})`); // Ngoại vi trong suốt hơn một chút
 
         ctx.fillStyle = gradient;
+
+        // Áp dụng biến dạng và xoay
+        ctx.translate(this.x, this.y);
+        ctx.rotate(this.rotation);
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.ellipse(
+            0, // Vị trí x tương đối sau khi dịch chuyển
+            0, // Vị trí y tương đối sau khi dịch chuyển
+            this.size * (1 + Math.sin(this.y * 0.01 + this.oscillationOffset) * this.shapeDistortion), // Thay đổi chiều rộng nhẹ
+            this.size * (1 - Math.cos(this.y * 0.01 + this.oscillationOffset) * this.shapeDistortion), // Thay đổi chiều cao nhẹ
+            0, // Góc xoay đã áp dụng bằng ctx.rotate
+            0,
+            Math.PI * 2
+        );
         ctx.fill();
 
-        // Thêm đường viền mỏng, óng ánh
-        ctx.strokeStyle = `rgba(255, 255, 255, ${this.alpha * 0.8})`; // Viền trắng hơn
-        ctx.lineWidth = 1;
+        // Thêm đường viền mỏng, óng ánh hơn và sáng hơn
+        ctx.strokeStyle = `rgba(255, 255, 255, ${this.alpha * 1.0})`; // Viền trắng rất sáng
+        ctx.lineWidth = 2; // Độ dày viền tăng
         ctx.beginPath();
-        ctx.arc(this.x, this.y, this.size, 0, Math.PI * 2);
+        ctx.ellipse(
+            0,
+            0,
+            this.size * (1 + Math.sin(this.y * 0.01 + this.oscillationOffset) * this.shapeDistortion),
+            this.size * (1 - Math.cos(this.y * 0.01 + this.oscillationOffset) * this.shapeDistortion),
+            0,
+            0,
+            Math.PI * 2
+        );
         ctx.stroke();
+
+        // Thêm một highlight lớn hơn và một highlight nhỏ hơn trên bề mặt
+        if (this.alpha > 0.3) { // Chỉ vẽ highlight khi bong bóng còn đủ rõ
+            // Highlight lớn và sáng hơn
+            ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha * 0.95})`; // Rất sáng
+            ctx.beginPath();
+            ctx.arc(this.size * 0.35, -this.size * 0.35, this.size * 0.15, 0, Math.PI * 2); // Vị trí highlight tương đối, kích thước lớn hơn
+            ctx.fill();
+
+            // Highlight nhỏ, mờ hơn một chút
+            ctx.fillStyle = `rgba(255, 255, 255, ${this.alpha * 0.75})`; // Sáng vừa
+            ctx.beginPath();
+            ctx.arc(-this.size * 0.3, -this.size * 0.5, this.size * 0.08, 0, Math.PI * 2); // Vị trí highlight tương đối, kích thước nhỏ hơn
+            ctx.fill();
+        }
 
         ctx.restore();
     }
@@ -622,7 +665,7 @@ function animate() {
     }
 
     // Cập nhật và vẽ bong bóng xà phòng
-    if (Math.random() < 0.2 && soapBubbles.length < 50) {
+    if (Math.random() < 0.25 && soapBubbles.length < 60) { // Tăng tần suất và số lượng bong bóng
         soapBubbles.push(new SoapBubble());
     }
     for (let i = soapBubbles.length - 1; i >= 0; i--) {
